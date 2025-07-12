@@ -34,6 +34,11 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-solarized-dark)
 
+;; CUSTOM:
+;; Set the doom font size:
+(setq doom-font (font-spec :size 18))
+
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
@@ -76,37 +81,13 @@
 ;; they are implemented.
 
 ;; CUSTOM:
-;; Adding 'Prettier' support:
-(setq-hook! 'js-mode-hook +format-with-lsp nil)
-;; (setq-hook! 'js-mode-hook +format-with :none)
-(add-hook 'js-mode-hook 'prettier-js-mode)
-
-(setq-hook! 'typescript-mode-hook +format-with-lsp nil)
-;; (setq-hook! 'typescript-mode-hook +format-with :none)
-(add-hook 'typescript-mode-hook 'prettier-js-mode)
-
-(setq-hook! 'rjsx-mode-hook +format-with-lsp nil)
-;; (setq-hook! 'rjsx-mode-hook +format-with :none)
-(add-hook 'rjsx-mode-hook 'prettier-js-mode)
-
-;; Forcing Prettier to not interfere with 'apheleia' which is apparently being used by Doom Emacs:
-(add-to-list '+format-on-save-disabled-modes 'prettier-js-mode)
-(add-to-list '+format-on-save-disabled-modes 'js-mode)
-(add-to-list '+format-on-save-disabled-modes 'typescript-mode)
-(add-to-list '+format-on-save-disabled-modes 'rjxs-mode)
-(add-to-list '+format-on-save-disabled-modes 'js2-mode)
-
-;; CUSTOM:
-;; Adding Treesitter support:
-(use-package! tree-sitter
-  :hook ((typescript-mode . tree-sitter-mode)
-         (typescript-mode . tree-sitter-hl-mode))
-  :config
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-
-(use-package! tree-sitter-langs)
-
-;; CUSTOM:
 ;; Force 'vterm' to NOT use evil-mode:
 (after! vterm
   (add-hook 'vterm-mode-hook (lambda () (evil-local-mode -1))))
+
+;; Force 'blacken-mode' to be engaged with Python mode:
+(add-hook 'python-mode-hook 'blacken-mode)
+;; Force blacken-buffer to engage when Python files are saved:
+(add-hook 'python-mode-hook (lambda () (add-hook 'before-save-hook #'blacken-buffer nil 'local)))
+;; Add the local bin from pipx to Emacs so that I can use 'M-x blacken-buffer' without errors since its from pipx:
+(add-to-list 'exec-path "/Users/sam/.local/bin")
